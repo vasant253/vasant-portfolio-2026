@@ -407,6 +407,16 @@ footer{text-align:center;padding-block:26px;font-size:12px;letter-spacing:.14em;
 .show .badge.right{left:auto;right:14px}
 .vnote{margin:8px 0 0;font-family:var(--sans);font-size:13px;line-height:1.5;color:var(--muted);display:flex;gap:8px;align-items:flex-start}
 .vnote::before{content:"i";flex:none;width:16px;height:16px;margin-top:2px;border-radius:50%;border:1px solid var(--muted);font-size:10px;font-weight:600;font-style:normal;display:grid;place-items:center;line-height:1}
+/* badges: bottom-left, scale with screen size */
+.show .badge{top:auto;bottom:14px;left:14px;font-size:clamp(9px,1vw,12px);padding:.55em 1em .48em;letter-spacing:.06em}
+.show .badge.right{top:14px;bottom:auto;left:auto;right:14px}
+.snd{font-size:clamp(9px,1vw,12px)}
+@media (max-width:560px){
+  .show .badge{bottom:8px;left:8px;padding:4px 8px 3px;letter-spacing:.04em;box-shadow:0 3px 8px -4px rgba(0,0,0,.5)}
+  .show .badge.right{top:8px;right:8px}
+  .snd{right:8px;bottom:8px;padding:5px 9px 4px 20px}
+  .snd::before{left:8px;width:6px;height:6px}
+}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}html{scroll-behavior:auto}}
 </style>
 
