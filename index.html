@@ -404,6 +404,9 @@ footer{text-align:center;padding-block:26px;font-size:12px;letter-spacing:.14em;
 .about.ab-play .avatar .pose{animation:slideUpIn 1s .7s cubic-bezier(.16,.8,.2,1) both}
 /* series badge on a showcase */
 .show .badge{position:absolute;left:14px;top:14px;z-index:2;font-family:var(--sans);font-weight:600;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--paper-ink);background:var(--butter);padding:7px 12px 6px;border-radius:999px;box-shadow:0 6px 16px -6px rgba(0,0,0,.5);pointer-events:none}
+.show .badge.right{left:auto;right:14px}
+.vnote{margin:8px 0 0;font-family:var(--sans);font-size:13px;line-height:1.5;color:var(--muted);display:flex;gap:8px;align-items:flex-start}
+.vnote::before{content:"i";flex:none;width:16px;height:16px;margin-top:2px;border-radius:50%;border:1px solid var(--muted);font-size:10px;font-weight:600;font-style:normal;display:grid;place-items:center;line-height:1}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}html{scroll-behavior:auto}}
 </style>
 
@@ -576,8 +579,9 @@ footer{text-align:center;padding-block:26px;font-size:12px;letter-spacing:.14em;
   <div class="wrap reel-stack">
     <p class="chap-intro">Horizontal edits for YouTube and websites, including a short film made fully with AI.</p>
     <figure class="show" data-src="videos/ai-short-film.mp4" data-poster="img/ai-short-film-poster.jpg">
-      <div class="frame"><div class="ph c"><span class="play"></span></div><span class="badge">6-min short film · 100% AI</span></div>
+      <div class="frame"><div class="ph c"><span class="play"></span></div><span class="badge right">6-min short film · 100% AI</span></div>
       <figcaption><b>AI Short Film · Made Entirely with AI</b><span>Sci-fi · 6:40</span></figcaption>
+      <p class="vnote">Video quality is compressed for web playback. The full-quality film is available on request.</p>
     </figure>
     <figure class="show" data-src="">
       <div class="frame"><div class="ph "><div class="slots"><i class="slot w"></i><i class="slot w"></i></div><span class="play"></span></div></div>
