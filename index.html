@@ -402,6 +402,8 @@ footer{text-align:center;padding-block:26px;font-size:12px;letter-spacing:.14em;
 .about.ab-play .about-photo.avatar img{animation:none}
 .about.ab-armed .avatar .pose{transform:translateY(100%)}
 .about.ab-play .avatar .pose{animation:slideUpIn 1s .7s cubic-bezier(.16,.8,.2,1) both}
+/* series badge on a showcase */
+.show .badge{position:absolute;left:14px;top:14px;z-index:2;font-family:var(--sans);font-weight:600;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--paper-ink);background:var(--butter);padding:7px 12px 6px;border-radius:999px;box-shadow:0 6px 16px -6px rgba(0,0,0,.5);pointer-events:none}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}html{scroll-behavior:auto}}
 </style>
 
@@ -528,18 +530,10 @@ footer{text-align:center;padding-block:26px;font-size:12px;letter-spacing:.14em;
 </section>
 <section class="band">
   <div class="wrap reel-stack">
-    <p class="chap-intro">Short, product-first ads made entirely with AI tools, cut for vertical feeds with the hook in the first two seconds.</p>
-    <figure class="show" data-src="">
-      <div class="frame"><div class="ph "><div class="slots"><i class="slot"></i><i class="slot"></i><i class="slot"></i></div><span class="play"></span></div></div>
-      <figcaption><b>Milk-Bone · Frido · ZeroB</b><span>Product ads</span></figcaption>
-    </figure>
-    <figure class="show" data-src="https://drive.google.com/file/d/1MwjyVvgUKIfT-9EWfl1lez9h3ZmsgEJ6/view?usp=drive_link">
-      <div class="frame"><div class="ph b"><div class="slots"><i class="slot w"></i><i class="slot"></i><i class="slot"></i></div><span class="play"></span></div></div>
-      <figcaption><b>AI product commercials</b><span>Behind the edit</span></figcaption>
-    </figure>
-    <figure class="show" data-src="">
-      <div class="frame"><div class="ph c"><div class="slots"><i class="slot"></i><i class="slot"></i><i class="slot"></i></div><span class="play"></span></div></div>
-      <figcaption><b>Brand ads</b><span>Cutdowns</span></figcaption>
+    <p class="chap-intro">Short, product-first ads made entirely with AI tools, from single spots to full ad series of 12–16 episodes, cut for vertical feeds with the hook in the first two seconds.</p>
+    <figure class="show series" data-src="videos/product-series.mp4" data-poster="img/product-series-poster.jpg">
+      <div class="frame"><div class="ph c"><span class="play"></span></div><span class="badge">Ad series · 12–16 episodes</span></div>
+      <figcaption><b>Don't Be Like Ramesh · Ecozen</b><span>Episodic ad series</span></figcaption>
     </figure>
   </div>
 </section>
@@ -652,7 +646,7 @@ footer{text-align:center;padding-block:26px;font-size:12px;letter-spacing:.14em;
         snd.addEventListener('click',function(){ v.muted=!v.muted; snd.textContent=v.muted?'Sound off':'Sound on'; snd.classList.toggle('on',!v.muted); if(v.paused) v.play().catch(function(){}); });
         setTimeout(function(){ frame.appendChild(snd); var pr=v.play(); if(pr&&pr.catch) pr.catch(function(){}); },0);
       }
-      if(poster) v.poster=poster; frame.innerHTML=''; frame.appendChild(v); return;
+      if(poster) v.poster=poster; var badge=frame.querySelector('.badge'); frame.innerHTML=''; frame.appendChild(v); if(badge && !fig.hasAttribute('data-autoplay')) frame.appendChild(badge); return;
     }
     // link wrapper: plays inline when embeds are allowed, otherwise opens the video in a new tab
     var a=document.createElement('a'); a.className='frame'; a.href=src; a.target='_blank'; a.rel='noopener';
