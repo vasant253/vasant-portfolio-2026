@@ -531,7 +531,7 @@ footer{text-align:center;padding-block:26px;font-size:12px;letter-spacing:.14em;
 <section class="band">
   <div class="wrap reel-stack">
     <p class="chap-intro">Short, product-first ads made entirely with AI tools, from single spots to full ad series of 12–16 episodes, cut for vertical feeds with the hook in the first two seconds.</p>
-    <figure class="show series" data-src="videos/product-series.mp4" data-poster="img/product-series-poster.jpg">
+    <figure class="show series" data-src="videos/product-series.mp4" data-poster="img/product-series-poster.jpg" data-autoplay>
       <div class="frame"><div class="ph c"><span class="play"></span></div><span class="badge">Ad series · 12–16 episodes</span></div>
       <figcaption><b>Don't Be Like Ramesh · Ecozen</b><span>Episodic ad series</span></figcaption>
     </figure>
@@ -654,7 +654,7 @@ footer{text-align:center;padding-block:26px;font-size:12px;letter-spacing:.14em;
         snd.addEventListener('click',function(){ v.muted=!v.muted; snd.textContent=v.muted?'Sound off':'Sound on'; snd.classList.toggle('on',!v.muted); if(v.paused) v.play().catch(function(){}); });
         setTimeout(function(){ frame.appendChild(snd); var pr=v.play(); if(pr&&pr.catch) pr.catch(function(){}); },0);
       }
-      if(poster) v.poster=poster; var badge=frame.querySelector('.badge'); frame.innerHTML=''; frame.appendChild(v); if(badge && !fig.hasAttribute('data-autoplay')) frame.appendChild(badge); return;
+      if(poster) v.poster=poster; var badge=frame.querySelector('.badge'); frame.innerHTML=''; frame.appendChild(v); if(badge) frame.appendChild(badge); return;
     }
     // link wrapper: plays inline when embeds are allowed, otherwise opens the video in a new tab
     var a=document.createElement('a'); a.className='frame'; a.href=src; a.target='_blank'; a.rel='noopener';
