@@ -535,6 +535,14 @@ footer{text-align:center;padding-block:26px;font-size:12px;letter-spacing:.14em;
       <div class="frame"><div class="ph c"><span class="play"></span></div><span class="badge">Ad series · 12–16 episodes</span></div>
       <figcaption><b>Don't Be Like Ramesh · Ecozen</b><span>Episodic ad series</span></figcaption>
     </figure>
+    <figure class="show" data-src="videos/product-hypermotion.mp4" data-poster="img/product-hypermotion-poster.jpg" data-loop>
+      <div class="frame"><div class="ph"><span class="play"></span></div><span class="badge">Hypermotion · Product video</span></div>
+      <figcaption><b>Hypermotion &amp; product videos</b><span>Product ads</span></figcaption>
+    </figure>
+    <figure class="show" data-src="https://drive.google.com/file/d/1MwjyVvgUKIfT-9EWfl1lez9h3ZmsgEJ6/view?usp=drive_link">
+      <div class="frame"><div class="ph b"><div class="slots"><i class="slot w"></i><i class="slot"></i><i class="slot"></i></div><span class="play"></span></div></div>
+      <figcaption><b>AI product commercials</b><span>Behind the edit</span></figcaption>
+    </figure>
   </div>
 </section>
 
@@ -640,6 +648,10 @@ footer{text-align:center;padding-block:26px;font-size:12px;letter-spacing:.14em;
     var title=(fig.querySelector('figcaption b')||{}).textContent||'video';
     if(!info){ // own video file
       var v=document.createElement('video'); v.src=src; v.controls=true; v.playsInline=true; v.preload='metadata';
+      if(fig.hasAttribute('data-loop')){ // silent product loop: plays muted on repeat, no controls
+        v.muted=true; v.defaultMuted=true; v.loop=true; v.autoplay=true; v.controls=false; v.setAttribute('muted','');
+        setTimeout(function(){ var pr=v.play(); if(pr&&pr.catch) pr.catch(function(){}); },0);
+      }
       if(fig.hasAttribute('data-autoplay')){ // continuous muted loop, with a small sound toggle
         v.muted=true; v.defaultMuted=true; v.loop=true; v.autoplay=true; v.controls=false; v.setAttribute('muted','');
         var snd=document.createElement('button'); snd.type='button'; snd.className='snd'; snd.textContent='Sound off';
