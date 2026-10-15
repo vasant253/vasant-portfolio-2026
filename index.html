@@ -95,6 +95,9 @@ h1,h2,h3,.stat b,.hero-role,.hero-yr,.tool b,.show figcaption b,.tile figcaption
 .btn.primary{background:var(--coral);border-color:var(--coral);color:#fff}
 .btn:hover{border-color:var(--butter);color:var(--butter)}
 .btn.primary:hover{background:#d93c3c;color:#fff;border-color:#d93c3c}
+.cta-row.social{margin-top:14px;gap:10px}
+.btn.sm{font-size:14px;padding:9px 16px;color:var(--muted)}
+.btn svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
 
 /* ---------- side dot nav ---------- */
 .dots{position:fixed;right:calc(14px + env(safe-area-inset-right,0px));top:50%;transform:translateY(-50%);z-index:20;display:flex;flex-direction:column;gap:12px;padding:12px 8px;background:rgba(22,22,24,.55);backdrop-filter:blur(8px);border-radius:20px}
@@ -422,9 +425,7 @@ footer{text-align:center;padding-block:26px;font-size:12px;letter-spacing:.14em;
 @media (max-width:560px){ .show .badge.over-controls{bottom:50px} }
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}html{scroll-behavior:auto}}
 </style>
-
-</head>
-<body>
+</head><body>
 <!-- side navigation -->
 <nav class="dots" aria-label="Sections">
   <a href="#top" title="Home"></a>
@@ -590,7 +591,7 @@ footer{text-align:center;padding-block:26px;font-size:12px;letter-spacing:.14em;
 </section>
 <section class="band">
   <div class="wrap reel-stack">
-    <p class="chap-intro">Horizontal edits for YouTube and websites, including a short film made fully with AI.</p>
+    <p class="chap-intro">Viral-style 3D AI ads for brands and a short film, made entirely with AI.</p>
     <figure class="show" data-src="videos/trendy-ai-videos.mp4" data-poster="img/trendy-ai-videos-poster.jpg" data-loop>
       <div class="frame"><div class="ph"><span class="play"></span></div><span class="badge">1M+ organic views</span></div>
       <figcaption><b>Trendy 3D AI Videos for Brands</b><span>Ecozen · 3D characters</span></figcaption>
@@ -637,6 +638,10 @@ footer{text-align:center;padding-block:26px;font-size:12px;letter-spacing:.14em;
       <a class="btn primary" href="https://wa.me/918766541388?text=Hi%20Vasant%2C%20I%20saw%20your%20portfolio%20and%20want%20to%20discuss%20a%20video%20ad." target="_blank" rel="noopener">Chat on WhatsApp</a>
       <a class="btn" href="mailto:vasantgawade253@gmail.com?subject=Video%20ad%20enquiry">Send an email</a>
     </div>
+    <div class="cta-row social">
+      <a class="btn sm" href="https://www.fiverr.com/s/Q22amrP" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"/></svg>Hire me on Fiverr</a>
+      <a class="btn sm" href="https://www.instagram.com/_spring_creatives_" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".6"/></svg>@_spring_creatives_</a>
+    </div>
   </div>
 </section>
 <a class="hire off" href="https://wa.me/918766541388?text=Hi%20Vasant%2C%20I%20saw%20your%20portfolio%20and%20want%20to%20discuss%20a%20video%20ad." target="_blank" rel="noopener" aria-label="Hire me on WhatsApp"><span class="dot" aria-hidden="true"></span>Hire me</a>
@@ -655,21 +660,31 @@ footer{text-align:center;padding-block:26px;font-size:12px;letter-spacing:.14em;
       return {thumb:'https://vumbnail.com/'+m[1]+'.jpg', embed:'https://player.vimeo.com/video/'+m[1]+'?autoplay=1', label:'Vimeo'};
     return null; // treat as a video file
   }
+  // looping videos download only when near the screen, play while visible and pause when scrolled away
+  var lazyIO=('IntersectionObserver' in window)?new IntersectionObserver(function(es){ es.forEach(function(e){
+    var v=e.target;
+    if(e.isIntersecting){ if(!v.getAttribute('src')){ v.src=v.getAttribute('data-lazy'); } var pr=v.play(); if(pr&&pr.catch) pr.catch(function(){}); }
+    else if(!v.paused) v.pause();
+  }); },{rootMargin:'200px 0px',threshold:0}):null;
+  var pauseIO=('IntersectionObserver' in window)?new IntersectionObserver(function(es){ es.forEach(function(e){ if(!e.isIntersecting&&!e.target.paused) e.target.pause(); }); },{threshold:0}):null;
   document.querySelectorAll('.show[data-src]').forEach(function(fig){
     var src=(fig.getAttribute('data-src')||'').trim(); if(!src) return;
     var frame=fig.querySelector('.frame'), poster=fig.getAttribute('data-poster'), info=parse(src);
     var title=(fig.querySelector('figcaption b')||{}).textContent||'video';
     if(!info){ // own video file
-      var v=document.createElement('video'); v.src=src; v.controls=true; v.playsInline=true; v.preload='metadata';
+      var v=document.createElement('video'); v.controls=true; v.playsInline=true; v.preload='none';
+      var auto=fig.hasAttribute('data-loop')||fig.hasAttribute('data-autoplay');
+      if(auto&&lazyIO){ v.setAttribute('data-lazy',src); lazyIO.observe(v); } else { v.src=src; if(pauseIO) pauseIO.observe(v); }
       if(fig.hasAttribute('data-loop')){ // silent product loop: plays muted on repeat, no controls
-        v.muted=true; v.defaultMuted=true; v.loop=true; v.autoplay=true; v.controls=false; v.setAttribute('muted','');
-        setTimeout(function(){ var pr=v.play(); if(pr&&pr.catch) pr.catch(function(){}); },0);
+        v.muted=true; v.defaultMuted=true; v.loop=true; v.controls=false; v.setAttribute('muted','');
+        if(!lazyIO){ v.autoplay=true; setTimeout(function(){ var pr=v.play(); if(pr&&pr.catch) pr.catch(function(){}); },0); }
       }
       if(fig.hasAttribute('data-autoplay')){ // continuous muted loop, with a small sound toggle
-        v.muted=true; v.defaultMuted=true; v.loop=true; v.autoplay=true; v.controls=false; v.setAttribute('muted','');
+        v.muted=true; v.defaultMuted=true; v.loop=true; v.controls=false; v.setAttribute('muted','');
+        if(!lazyIO) v.autoplay=true;
         var snd=document.createElement('button'); snd.type='button'; snd.className='snd'; snd.textContent='Sound off';
         snd.addEventListener('click',function(){ v.muted=!v.muted; snd.textContent=v.muted?'Sound off':'Sound on'; snd.classList.toggle('on',!v.muted); if(v.paused) v.play().catch(function(){}); });
-        setTimeout(function(){ frame.appendChild(snd); var pr=v.play(); if(pr&&pr.catch) pr.catch(function(){}); },0);
+        setTimeout(function(){ frame.appendChild(snd); if(!lazyIO){ var pr=v.play(); if(pr&&pr.catch) pr.catch(function(){}); } },0);
       }
       if(poster) v.poster=poster; var badge=frame.querySelector('.badge'); frame.innerHTML=''; frame.appendChild(v); if(badge) frame.appendChild(badge); return;
     }
@@ -794,6 +809,4 @@ if('IntersectionObserver' in window){
   dots.forEach(function(d){ var el=document.querySelector(d.getAttribute('href')); if(el) io.observe(el); });
 }
 </script>
-
-</body>
-</html>
+</body></html>
