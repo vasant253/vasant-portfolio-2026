@@ -249,7 +249,14 @@ img.mono{display:block;object-fit:contain;border-radius:0;filter:drop-shadow(0 6
 .chap-intro{color:var(--muted);max-width:60ch;font-size:17px;margin:0 auto;text-align:center}
 .show{margin:0;min-width:0}
 .show .frame{position:relative;aspect-ratio:16/9;max-width:100%;border-radius:12px;overflow:hidden;background:var(--card);box-shadow:0 24px 50px -24px rgba(0,0,0,.8)}
-.show video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;background:#000}
+.show video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;background:transparent}
+.show .frame{background-size:cover;background-position:center}
+/* loading indicator while a video buffers */
+.ldr{position:absolute;inset:0;z-index:1;display:grid;place-items:center;pointer-events:none;opacity:0;transition:opacity .3s;background:rgba(14,14,16,.35)}
+.ldr i{width:clamp(30px,4vw,44px);aspect-ratio:1;border-radius:50%;border:3px solid rgba(255,255,255,.22);border-top-color:var(--coral);animation:ldspin .8s linear infinite}
+.ldr b{position:absolute;left:50%;top:calc(50% + clamp(28px,3.4vw,38px));transform:translateX(-50%);font:600 11px/1 var(--sans);letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.8);white-space:nowrap}
+.frame.ld .ldr{opacity:1}
+@keyframes ldspin{to{transform:rotate(360deg)}}
 .show figcaption{margin-top:12px;display:flex;justify-content:space-between;gap:12px;align-items:baseline}
 .show figcaption b{font-weight:400;font-size:clamp(16px,1.8vw,20px);line-height:1.2;min-width:0}
 .show figcaption span{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);white-space:nowrap}
@@ -664,7 +671,7 @@ footer{text-align:center;padding-block:26px;font-size:12px;letter-spacing:.14em;
   // looping videos download only when near the screen, play while visible and pause when scrolled away
   var lazyIO=('IntersectionObserver' in window)?new IntersectionObserver(function(es){ es.forEach(function(e){
     var v=e.target;
-    if(e.isIntersecting){ if(!v.getAttribute('src')){ v.src=v.getAttribute('data-lazy'); } var pr=v.play(); if(pr&&pr.catch) pr.catch(function(){}); }
+    if(e.isIntersecting){ if(!v.getAttribute('src')){ v.src=v.getAttribute('data-lazy'); if(v.parentNode) v.parentNode.classList.add('ld'); } var pr=v.play(); if(pr&&pr.catch) pr.catch(function(){}); }
     else if(!v.paused) v.pause();
   }); },{rootMargin:'200px 0px',threshold:0}):null;
   var pauseIO=('IntersectionObserver' in window)?new IntersectionObserver(function(es){ es.forEach(function(e){ if(!e.isIntersecting&&!e.target.paused) e.target.pause(); }); },{threshold:0}):null;
@@ -687,7 +694,13 @@ footer{text-align:center;padding-block:26px;font-size:12px;letter-spacing:.14em;
         snd.addEventListener('click',function(){ v.muted=!v.muted; snd.textContent=v.muted?'Sound off':'Sound on'; snd.classList.toggle('on',!v.muted); if(v.paused) v.play().catch(function(){}); });
         setTimeout(function(){ frame.appendChild(snd); if(!lazyIO){ var pr=v.play(); if(pr&&pr.catch) pr.catch(function(){}); } },0);
       }
-      if(poster) v.poster=poster; var badge=frame.querySelector('.badge'); frame.innerHTML=''; frame.appendChild(v); if(badge) frame.appendChild(badge); return;
+      if(poster){ v.poster=poster; frame.style.backgroundImage='url('+poster+')'; }
+      var ldr=document.createElement('span'); ldr.className='ldr'; ldr.setAttribute('aria-hidden','true'); ldr.innerHTML='<i></i><b>Loading</b>';
+      var on=function(){ frame.classList.add('ld'); }, off=function(){ frame.classList.remove('ld'); };
+      v.addEventListener('waiting',on); v.addEventListener('play',function(){ if(v.readyState<3) on(); });
+      ['playing','canplay','pause','error'].forEach(function(ev){ v.addEventListener(ev,off); });
+      setTimeout(function(){ frame.appendChild(ldr); },0);
+      var badge=frame.querySelector('.badge'); frame.innerHTML=''; frame.appendChild(v); if(badge) frame.appendChild(badge); return;
     }
     // link wrapper: plays inline when embeds are allowed, otherwise opens the video in a new tab
     var a=document.createElement('a'); a.className='frame'; a.href=src; a.target='_blank'; a.rel='noopener';
