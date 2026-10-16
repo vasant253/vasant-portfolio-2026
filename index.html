@@ -193,7 +193,7 @@ img.mono{display:block;object-fit:contain;border-radius:0;filter:drop-shadow(0 6
 @media (max-width:600px){.contents{grid-template-columns:1fr}}
 
 /* ---------- chapter title cards ---------- */
-.chapter{position:relative;padding-block:clamp(90px,14vw,190px);text-align:center;background:var(--bg-2);overflow:hidden}
+.chapter{position:relative;padding-block:clamp(64px,8vw,112px);text-align:center;background:var(--bg-2);overflow:hidden}
 .chapter .meta{position:absolute;top:22px;left:var(--gut);right:var(--gut-r);display:flex;justify-content:space-between;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
 .chapter h2{font-size:clamp(40px,7.5vw,96px);line-height:.92;text-transform:uppercase}
 .chapter h2 em{font-style:normal;color:var(--coral);display:block}
@@ -245,6 +245,7 @@ img.mono{display:block;object-fit:contain;border-radius:0;filter:drop-shadow(0 6
 
 /* showcase: one horizontal video per row */
 .reel-stack{max-width:1020px;display:grid;gap:clamp(36px,5vw,64px)}
+.chapter + .band{padding-top:clamp(36px,4.5vw,60px)}
 .chap-intro{color:var(--muted);max-width:60ch;font-size:17px;margin:0 auto;text-align:center}
 .show{margin:0;min-width:0}
 .show .frame{position:relative;aspect-ratio:16/9;max-width:100%;border-radius:12px;overflow:hidden;background:var(--card);box-shadow:0 24px 50px -24px rgba(0,0,0,.8)}
