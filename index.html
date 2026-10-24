@@ -416,6 +416,14 @@ footer{text-align:center;padding-block:26px;font-size:12px;letter-spacing:.14em;
 /* series badge on a showcase */
 .show .badge{position:absolute;left:14px;top:14px;z-index:2;font-family:var(--sans);font-weight:600;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--paper-ink);background:var(--butter);padding:7px 12px 6px;border-radius:999px;box-shadow:0 6px 16px -6px rgba(0,0,0,.5);pointer-events:none}
 .show .badge.right{left:auto;right:14px}
+/* full-screen button on each video */
+.fsb{position:absolute;top:12px;right:12px;z-index:3;width:36px;height:36px;display:grid;place-items:center;padding:0;border-radius:50%;border:1px solid rgba(255,255,255,.25);background:rgba(22,22,24,.6);backdrop-filter:blur(6px);color:#fff;cursor:pointer;transition:transform .2s,background .2s}
+.fsb.left{right:auto;left:12px}
+.fsb svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.fsb:hover{background:var(--coral);border-color:var(--coral);transform:scale(1.06)}
+@media (max-width:600px){.fsb{top:8px;right:8px;width:30px;height:30px}.fsb.left{left:8px}.fsb svg{width:15px;height:15px}}
+.show video:fullscreen{object-fit:contain;background:#000}
+.show video:-webkit-full-screen{object-fit:contain;background:#000}
 .vnote{margin:8px 0 0;font-family:var(--sans);font-size:13px;line-height:1.5;color:var(--muted);display:flex;gap:8px;align-items:flex-start}
 .vnote::before{content:"i";flex:none;width:16px;height:16px;margin-top:2px;border-radius:50%;border:1px solid var(--muted);font-size:10px;font-weight:600;font-style:normal;display:grid;place-items:center;line-height:1}
 /* badges: bottom-left, scale with screen size */
@@ -704,7 +712,35 @@ footer{text-align:center;padding-block:26px;font-size:12px;letter-spacing:.14em;
       v.addEventListener('waiting',on); v.addEventListener('play',function(){ if(v.readyState<3) on(); });
       ['playing','canplay','pause','error'].forEach(function(ev){ v.addEventListener(ev,off); });
       setTimeout(function(){ frame.appendChild(ldr); },0);
-      var badge=frame.querySelector('.badge'); frame.innerHTML=''; frame.appendChild(v); if(badge) frame.appendChild(badge); return;
+      var badge=frame.querySelector('.badge'); frame.innerHTML=''; frame.appendChild(v); if(badge) frame.appendChild(badge);
+      if(auto&&!fig.closest('.reel-wrap')){ // full-screen viewing (every looping row except the showreel; the short film keeps its own player controls)
+        var wasCtl=v.controls, inFS=false;
+        var fsb=document.createElement('button'); fsb.type='button'; fsb.className='fsb'; fsb.setAttribute('aria-label','Watch '+title+' full screen'); fsb.title='Full screen';
+        fsb.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>';
+        if(badge&&badge.classList.contains('right')) fsb.classList.add('left');
+        var setSnd=function(onOff){ if(snd){ snd.textContent=onOff?'Sound on':'Sound off'; snd.classList.toggle('on',onOff); } };
+        var enter=function(){
+          if(v.requestFullscreen) return v.requestFullscreen().catch(function(){ if(v.webkitEnterFullscreen) try{ v.webkitEnterFullscreen(); }catch(_){} });
+          if(v.webkitRequestFullscreen) return v.webkitRequestFullscreen();
+          if(v.webkitEnterFullscreen){ try{ v.webkitEnterFullscreen(); }catch(_){ v.addEventListener('loadedmetadata',function(){ try{ v.webkitEnterFullscreen(); }catch(__){} },{once:true}); } }
+        };
+        var openFS=function(e){ if(e){ e.preventDefault(); e.stopPropagation(); }
+          if(!v.getAttribute('src')){ v.src=v.getAttribute('data-lazy')||src; }
+          try{ v.currentTime=0; }catch(_){}
+          v.muted=false; v.controls=true; setSnd(true); inFS=true;
+          var pr=v.play(); if(pr&&pr.catch) pr.catch(function(){});
+          enter();
+        };
+        var closeFS=function(){ if(!inFS) return; inFS=false; v.controls=wasCtl;
+          if(auto){ v.muted=true; setSnd(false); var pr=v.play(); if(pr&&pr.catch) pr.catch(function(){}); } };
+        var onChange=function(){ var el=document.fullscreenElement||document.webkitFullscreenElement; if(!el) closeFS(); };
+        document.addEventListener('fullscreenchange',onChange); document.addEventListener('webkitfullscreenchange',onChange);
+        v.addEventListener('webkitendfullscreen',closeFS);
+        fsb.addEventListener('click',openFS);
+        if(auto){ v.addEventListener('click',openFS); v.style.cursor='zoom-in'; }
+        frame.appendChild(fsb);
+      }
+      return;
     }
     // link wrapper: plays inline when embeds are allowed, otherwise opens the video in a new tab
     var a=document.createElement('a'); a.className='frame'; a.href=src; a.target='_blank'; a.rel='noopener';
