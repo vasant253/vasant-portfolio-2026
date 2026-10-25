@@ -418,10 +418,10 @@ footer{text-align:center;padding-block:26px;font-size:12px;letter-spacing:.14em;
 .show .badge.right{left:auto;right:14px}
 /* full-screen button on each video */
 .fsb{position:absolute;top:12px;right:12px;z-index:3;width:36px;height:36px;display:grid;place-items:center;padding:0;border-radius:50%;border:1px solid rgba(255,255,255,.25);background:rgba(22,22,24,.6);backdrop-filter:blur(6px);color:#fff;cursor:pointer;transition:transform .2s,background .2s}
-.fsb.left{right:auto;left:12px}
+.show .badge.right.nudge{right:58px}
 .fsb svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .fsb:hover{background:var(--coral);border-color:var(--coral);transform:scale(1.06)}
-@media (max-width:600px){.fsb{top:8px;right:8px;width:30px;height:30px}.fsb.left{left:8px}.fsb svg{width:15px;height:15px}}
+@media (max-width:600px){.fsb{top:8px;right:8px;width:30px;height:30px}.show .badge.right.nudge{right:44px;top:12px}.fsb svg{width:15px;height:15px}}
 .show video:fullscreen{object-fit:contain;background:#000}
 .show video:-webkit-full-screen{object-fit:contain;background:#000}
 .vnote{margin:8px 0 0;font-family:var(--sans);font-size:13px;line-height:1.5;color:var(--muted);display:flex;gap:8px;align-items:flex-start}
@@ -713,11 +713,11 @@ footer{text-align:center;padding-block:26px;font-size:12px;letter-spacing:.14em;
       ['playing','canplay','pause','error'].forEach(function(ev){ v.addEventListener(ev,off); });
       setTimeout(function(){ frame.appendChild(ldr); },0);
       var badge=frame.querySelector('.badge'); frame.innerHTML=''; frame.appendChild(v); if(badge) frame.appendChild(badge);
-      if(auto&&!fig.closest('.reel-wrap')){ // full-screen viewing (every looping row except the showreel; the short film keeps its own player controls)
+      if(!fig.closest('.reel-wrap')){ // full-screen viewing (every row except the showreel)
         var wasCtl=v.controls, inFS=false;
         var fsb=document.createElement('button'); fsb.type='button'; fsb.className='fsb'; fsb.setAttribute('aria-label','Watch '+title+' full screen'); fsb.title='Full screen';
         fsb.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>';
-        if(badge&&badge.classList.contains('right')) fsb.classList.add('left');
+        if(badge&&badge.classList.contains('right')) badge.classList.add('nudge'); // badge moves left to make room for the button
         var setSnd=function(onOff){ if(snd){ snd.textContent=onOff?'Sound on':'Sound off'; snd.classList.toggle('on',onOff); } };
         var enter=function(){
           if(v.requestFullscreen) return v.requestFullscreen().catch(function(){ if(v.webkitEnterFullscreen) try{ v.webkitEnterFullscreen(); }catch(_){} });
@@ -726,7 +726,7 @@ footer{text-align:center;padding-block:26px;font-size:12px;letter-spacing:.14em;
         };
         var openFS=function(e){ if(e){ e.preventDefault(); e.stopPropagation(); }
           if(!v.getAttribute('src')){ v.src=v.getAttribute('data-lazy')||src; }
-          try{ v.currentTime=0; }catch(_){}
+          if(auto){ try{ v.currentTime=0; }catch(_){} } // looping previews restart; the short film keeps its place
           v.muted=false; v.controls=true; setSnd(true); inFS=true;
           var pr=v.play(); if(pr&&pr.catch) pr.catch(function(){});
           enter();
